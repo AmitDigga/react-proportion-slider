@@ -1,8 +1,14 @@
 import React from "react";
-import { AwesomeRatioSlider } from "../src/components/AwesomeRatioSlider";
+import { ProportionSlider } from "../src/components/PropertionSlider";
 
 function App() {
-  return <AwesomeRatioSlider />;
+  return (
+    <ProportionSlider
+      value={[0, 100]}
+      proportions={[{ name: "Left" }, { name: "Right" }]}
+      onChange={(change) => console.log(change)}
+    />
+  );
 }
 
 export default App;

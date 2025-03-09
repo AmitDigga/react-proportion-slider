@@ -16,7 +16,7 @@ export default defineConfig({
     },
     lib: {
       entry: "src/index.ts",
-      name: "react-awesome-ratio-slider",
+      name: "react-proportion-slider",
       fileName: (format) => `my-react-library.${format}.js`,
     },
   },
