@@ -58,8 +58,8 @@ export const ProportionSlider = ({
       const diffPx = px - refStartX.current;
       const totalWidthPx = refWidth.current! - sliderWidth;
       const total = refValue1Start.current! + refValue2Start.current!;
-      const newValue1 =
-        refValue1Start.current! + (diffPx / totalWidthPx) * total;
+      let newValue1 = refValue1Start.current! + (diffPx / totalWidthPx) * total;
+      newValue1 = Math.max(0, Math.min(total, newValue1));
       onChange([newValue1, total - newValue1]);
     },
     [onChange, sliderWidth]
