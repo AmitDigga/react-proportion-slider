@@ -4,6 +4,7 @@ export type ProportionDetail = {
   name: string;
 };
 
+type DisplayValueTypes = "percentage" | "none";
 export type ProportionSliderProps = {
   value: [number, number];
   proportions: [ProportionDetail, ProportionDetail];
@@ -11,6 +12,10 @@ export type ProportionSliderProps = {
   sliderOptions?: {
     width: number;
     gap: number;
+  };
+  options?: {
+    height: number;
+    displayValueType: DisplayValueTypes;
   };
 };
 export const ProportionSlider = ({
@@ -20,6 +25,10 @@ export const ProportionSlider = ({
   sliderOptions = {
     width: 5,
     gap: 2,
+  },
+  options = {
+    height: 20,
+    displayValueType: "percentage",
   },
 }: ProportionSliderProps) => {
   const refWidth = useRef<number | null>(null);
@@ -65,11 +74,16 @@ export const ProportionSlider = ({
       style={{
         display: "flex",
         flexDirection: "row",
+        height: options.height,
       }}
     >
       <Proportion
+        value={value[0]}
+        total={total}
         width={`calc(${(value[0] * 100) / total}% - ${sliderWidth / 2}px)`}
         detail={proportions[0]}
+        anchorName="left"
+        displayValueType={options.displayValueType}
       />
       <SliderKnob
         width={sliderOptions.width}
@@ -79,27 +93,57 @@ export const ProportionSlider = ({
         onDragEnd={onDragEnd}
       />
       <Proportion
+        value={value[1]}
+        total={total}
         width={`calc(${(value[1] * 100) / total}% - ${sliderWidth / 2}px)`}
         detail={proportions[1]}
+        anchorName="right"
+        displayValueType={options.displayValueType}
       />
     </div>
   );
 };
 
 export type ProportionProp = {
+  value: number;
+  total: number;
   detail: ProportionDetail;
   width: number | string;
+  anchorName: "left" | "right";
+  displayValueType: DisplayValueTypes;
 };
-export const Proportion = ({ detail, width }: ProportionProp) => {
+export const Proportion = ({
+  value,
+  total,
+  detail,
+  width,
+  anchorName,
+  displayValueType,
+}: ProportionProp) => {
+  const percent = (value * 100) / total;
+  const percentFormatted = `${percent.toFixed(2)}%`;
   return (
     <div
       style={{
         width,
         background: "gray",
         alignSelf: "stretch",
+        borderRadius: "5px",
+        color: "white",
+        display: "flex",
+        flexDirection: "row",
       }}
     >
-      {detail.name}
+      <div
+        style={{
+          marginLeft: anchorName === "left" ? "5px" : "auto",
+          marginRight: anchorName === "right" ? "5px" : "auto",
+          alignSelf: "center",
+        }}
+      >
+        {detail.name}
+      </div>
+      {displayValueType === "percentage" ? <div>{percentFormatted}</div> : null}
     </div>
   );
 };
@@ -142,9 +186,10 @@ export const SliderKnob = ({
     <div
       style={{
         width: `${width}px`,
-        margin: `0 ${gap}px`,
+        margin: `${gap}px ${gap}px`,
         alignSelf: "stretch",
         background: "red",
+        borderRadius: "2px",
       }}
     ></div>
   );

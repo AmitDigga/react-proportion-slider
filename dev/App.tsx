@@ -12,6 +12,14 @@ function App() {
       onChange={(change) => {
         setProportions(change);
       }}
+      sliderOptions={{
+        width: 5,
+        gap: 3,
+      }}
+      options={{
+        height: 40,
+        displayValueType: "percentage",
+      }}
     />
   );
 }
