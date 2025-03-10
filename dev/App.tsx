@@ -8,7 +8,16 @@ function App() {
   return (
     <ProportionSlider
       value={proportions}
-      proportions={[{ name: "Left" }, { name: "Right" }]}
+      proportions={[
+        {
+          name: "Left",
+          backgroundColor: "#AAA",
+        },
+        {
+          name: "Right",
+          backgroundColor: "#BBB",
+        },
+      ]}
       onChange={(change) => {
         setProportions(change);
       }}

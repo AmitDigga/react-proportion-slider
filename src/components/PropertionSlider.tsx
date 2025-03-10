@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 export type ProportionDetail = {
   name: string;
+  backgroundColor?: string;
 };
 
 type DisplayValueTypes = "percentage" | "none";
@@ -79,6 +80,7 @@ export const ProportionSlider = ({
     >
       <Proportion
         value={value[0]}
+        backgroundColor={proportions[0].backgroundColor}
         total={total}
         width={`calc(${(value[0] * 100) / total}% - ${sliderWidth / 2}px)`}
         detail={proportions[0]}
@@ -95,6 +97,7 @@ export const ProportionSlider = ({
       <Proportion
         value={value[1]}
         total={total}
+        backgroundColor={proportions[1].backgroundColor}
         width={`calc(${(value[1] * 100) / total}% - ${sliderWidth / 2}px)`}
         detail={proportions[1]}
         anchorName="right"
@@ -111,6 +114,7 @@ export type ProportionProp = {
   width: number | string;
   anchorName: "left" | "right";
   displayValueType: DisplayValueTypes;
+  backgroundColor?: string;
 };
 export const Proportion = ({
   value,
@@ -119,26 +123,27 @@ export const Proportion = ({
   width,
   anchorName,
   displayValueType,
+  backgroundColor = "gray",
 }: ProportionProp) => {
   const percent = (value * 100) / total;
-  const percentFormatted = `${percent.toFixed(2)}%`;
+  const percentFormatted = `${Math.round(percent)}%`;
   return (
     <div
       style={{
         width,
-        background: "gray",
+        background: backgroundColor,
         alignSelf: "stretch",
         borderRadius: "5px",
         color: "white",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: anchorName === "left" ? "row" : "row-reverse",
+        alignItems: "center",
       }}
     >
       <div
         style={{
           marginLeft: anchorName === "left" ? "5px" : "auto",
           marginRight: anchorName === "right" ? "5px" : "auto",
-          alignSelf: "center",
         }}
       >
         {detail.name}
@@ -190,6 +195,7 @@ export const SliderKnob = ({
         alignSelf: "stretch",
         background: "red",
         borderRadius: "2px",
+        cursor: "ew-resize",
       }}
     ></div>
   );
