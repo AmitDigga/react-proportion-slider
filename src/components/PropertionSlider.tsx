@@ -13,6 +13,7 @@ export type ProportionSliderProps = {
   sliderOptions?: {
     width: number;
     gap: number;
+    backgroundColor?: string;
   };
   options?: {
     height: number;
@@ -88,6 +89,7 @@ export const ProportionSlider = ({
         displayValueType={options.displayValueType}
       />
       <SliderKnob
+        backgroundColor={sliderOptions.backgroundColor}
         width={sliderOptions.width}
         gap={sliderOptions.gap}
         onDragStart={onDragStart}
@@ -156,6 +158,7 @@ export const Proportion = ({
 export type SliderKnobProps = {
   width: number;
   gap: number;
+  backgroundColor?: string;
   onDragStart: (px: number) => void;
   onDrag: (px: number) => void;
   onDragEnd: () => void;
@@ -164,6 +167,7 @@ export type SliderKnobProps = {
 export const SliderKnob = ({
   width,
   gap,
+  backgroundColor = "red",
   onDrag,
   onDragStart,
   onDragEnd,
@@ -210,7 +214,7 @@ export const SliderKnob = ({
         width: `${width}px`,
         margin: `${gap}px ${gap}px`,
         alignSelf: "stretch",
-        background: "red",
+        background: backgroundColor,
         borderRadius: "2px",
         cursor: "ew-resize",
       }}
