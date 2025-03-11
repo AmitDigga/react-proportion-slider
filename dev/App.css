@@ -6,3 +6,8 @@ html,body {
     height: 100%;
     background-color: #11110D;
 }
+
+* {
+    font-family: Roboto, sans-serif;
+    font-weight: 200;
+}
