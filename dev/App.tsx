@@ -22,11 +22,11 @@ function App() {
         proportions={[
           {
             name: "Skill",
-            backgroundColor: "#AAA",
+            backgroundColor: "#31332E",
           },
           {
             name: "3.7 Sonnet",
-            backgroundColor: "#BBB",
+            backgroundColor: "#5f625C",
           },
         ]}
         onChange={(change) => {
@@ -35,9 +35,10 @@ function App() {
         sliderOptions={{
           width: 5,
           gap: 3,
+          backgroundColor: "#EC1308",
         }}
         options={{
-          height: 40,
+          height: 50,
           displayValueType: "percentage",
         }}
       />
