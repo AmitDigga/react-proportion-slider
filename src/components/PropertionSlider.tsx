@@ -146,11 +146,20 @@ export const Proportion = ({
         style={{
           marginLeft: anchorName === "left" ? "5px" : "auto",
           marginRight: anchorName === "right" ? "5px" : "auto",
+          userSelect: "none",
         }}
       >
         {detail.name}
       </div>
-      {displayValueType === "percentage" ? <div>{percentFormatted}</div> : null}
+      {displayValueType === "percentage" ? (
+        <div
+          style={{
+            userSelect: "none",
+          }}
+        >
+          {percentFormatted}
+        </div>
+      ) : null}
     </div>
   );
 };
