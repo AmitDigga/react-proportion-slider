@@ -34,7 +34,7 @@ function App() {
         }}
         sliderOptions={{
           width: 5,
-          gap: 3,
+          gap: 5,
           backgroundColor: "#EC1308",
         }}
         options={{
