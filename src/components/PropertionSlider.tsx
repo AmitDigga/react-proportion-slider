@@ -168,15 +168,31 @@ export const SliderKnob = ({
   onDragStart,
   onDragEnd,
 }: SliderKnobProps) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const refIsDragging = useRef<boolean>(false);
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
+      if (e.target !== ref.current) {
+        return false;
+      }
+      refIsDragging.current = true;
       onDragStart(e.clientX);
+      return true;
     };
     const onMouseMove = (e: MouseEvent) => {
+      if (!refIsDragging.current) {
+        return false;
+      }
       onDrag(e.clientX);
+      return true;
     };
     const onMouseUp = () => {
+      if (!refIsDragging.current) {
+        return false;
+      }
+      refIsDragging.current = false;
       onDragEnd();
+      return true;
     };
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
@@ -189,6 +205,7 @@ export const SliderKnob = ({
   }, [onDragStart, onDrag, onDragEnd]);
   return (
     <div
+      ref={ref}
       style={{
         width: `${width}px`,
         margin: `${gap}px ${gap}px`,
