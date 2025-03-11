@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.css";
 import { ProportionSlider } from "../src/components/PropertionSlider";
 
 function App() {
@@ -6,30 +7,41 @@ function App() {
     50, 50,
   ]);
   return (
-    <ProportionSlider
-      value={proportions}
-      proportions={[
-        {
-          name: "Left",
-          backgroundColor: "#AAA",
-        },
-        {
-          name: "Right",
-          backgroundColor: "#BBB",
-        },
-      ]}
-      onChange={(change) => {
-        setProportions(change);
+    <div
+      style={{
+        height: "100%",
+        flex: 1,
+        padding: "20px 200px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
       }}
-      sliderOptions={{
-        width: 5,
-        gap: 3,
-      }}
-      options={{
-        height: 40,
-        displayValueType: "percentage",
-      }}
-    />
+    >
+      <ProportionSlider
+        value={proportions}
+        proportions={[
+          {
+            name: "Skill",
+            backgroundColor: "#AAA",
+          },
+          {
+            name: "3.7 Sonnet",
+            backgroundColor: "#BBB",
+          },
+        ]}
+        onChange={(change) => {
+          setProportions(change);
+        }}
+        sliderOptions={{
+          width: 5,
+          gap: 3,
+        }}
+        options={{
+          height: 40,
+          displayValueType: "percentage",
+        }}
+      />
+    </div>
   );
 }
 
