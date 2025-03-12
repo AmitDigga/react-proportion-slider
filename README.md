@@ -1,4 +1,74 @@
-# React + TypeScript + Vite
+# React Proportion Slider
+
+> **Note:** This package is currently in beta
+
+A React component that allows users to adjust the proportion of two elements using a slider.
+
+## Installation
+
+(Not yet published to npm)
+
+```bash
+npm install react-proportion-slider
+```
+
+## Usage
+
+```tsx
+import React from "react";
+import { ProportionSlider } from "react-proportion-slider";
+
+function App() {
+  const [proportions, setProportions] = React.useState<[number, number]>([
+    50, 50,
+  ]);
+  return (
+    <div
+      style={{
+        height: "100%",
+        flex: 1,
+        padding: "20px 200px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      <ProportionSlider
+        value={proportions}
+        proportions={[
+          {
+            name: "Skill",
+            backgroundColor: "#31332E",
+          },
+          {
+            name: "3.7 Sonnet",
+            backgroundColor: "#5f625C",
+          },
+        ]}
+        onChange={(change) => {
+          setProportions(change);
+        }}
+        sliderOptions={{
+          width: 5,
+          gap: 5,
+          backgroundColor: "#EC1308",
+        }}
+        options={{
+          height: 50,
+          displayValueType: "percentage",
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## Future Features
+
+1. Make it possible to adjust the proportion of more than two elements
+2. Add more customization options
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -7,7 +77,7 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+### Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
@@ -24,31 +94,31 @@ export default tseslint.config({
   languageOptions: {
     // other options...
     parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
       tsconfigRootDir: import.meta.dirname,
     },
   },
-})
+});
 ```
 
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from "eslint-plugin-react-x";
+import reactDom from "eslint-plugin-react-dom";
 
 export default tseslint.config({
   plugins: {
     // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
+    "react-x": reactX,
+    "react-dom": reactDom,
   },
   rules: {
     // other rules...
     // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
+    ...reactX.configs["recommended-typescript"].rules,
     ...reactDom.configs.recommended.rules,
   },
-})
+});
 ```

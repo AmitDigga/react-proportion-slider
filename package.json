@@ -1,7 +1,7 @@
 {
   "name": "react-proportion-slider",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.9.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
