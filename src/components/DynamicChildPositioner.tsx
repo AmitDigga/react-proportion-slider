@@ -1,5 +1,15 @@
 import React, { useRef, useState, useMemo, useEffect } from "react";
 
+type DynamicChildPositionerProps = {
+  rightNode: React.ReactNode;
+  leftNode: React.ReactNode;
+  options: {
+    primary: "left" | "right";
+  };
+  backgroundColor?: string;
+  width: number | string;
+};
+
 export const DynamicChildPositioner = ({
   rightNode,
   leftNode,
@@ -75,69 +85,55 @@ export const DynamicChildPositioner = ({
         color: "white",
       }}
     >
-      <div
-        ref={refLeft}
-        style={{
-          position: "absolute",
-          transition:
-            "transform 0.25s cubic-bezier(.47,1.64,.41,.8), top 0.25s cubic-bezier(.47,1.64,.41,.8)",
-          ...leftStyle,
-        }}
-      >
+      <div ref={refLeft} style={leftStyle}>
         {leftNode}
       </div>
-      <div
-        ref={refRight}
-        style={{
-          position: "absolute",
-          transition:
-            "transform 0.25s cubic-bezier(.47,1.64,.41,.8), top 0.25s cubic-bezier(.47,1.64,.41,.8)",
-          ...rightStyle,
-        }}
-      >
+      <div ref={refRight} style={rightStyle}>
         {rightNode}
       </div>
     </div>
   );
 };
-export type DynamicChildPositionerProps = {
-  rightNode: React.ReactNode;
-  leftNode: React.ReactNode;
-  options: {
-    primary: "left" | "right";
-  };
-  backgroundColor?: string;
-  width: number | string;
-};
 
-export const GAP = 5;
-export const STYLES = {
+const GAP = 5;
+const COMMON_STYLES: React.CSSProperties = {
+  position: "absolute",
+  transition: "all 200ms cubic-bezier(.47,1.64,.41,.8)",
+  transitionProperty: "transform, top, left, bottom, right",
+};
+const STYLES: Record<string, React.CSSProperties> = {
   TOP_LEFT: {
+    ...COMMON_STYLES,
     left: GAP,
     top: -GAP,
     transform: "translateY(-100%)",
   },
   LEFT: {
+    ...COMMON_STYLES,
     left: GAP,
     top: "50%",
     transform: "translateY(-50%)",
   },
   BOTTOM_LEFT: {
+    ...COMMON_STYLES,
     left: GAP,
     bottom: -GAP,
     transform: "translateY(100%)",
   },
   TOP_RIGHT: {
+    ...COMMON_STYLES,
     right: GAP,
     top: -GAP,
     transform: "translateY(-100%)",
   },
   RIGHT: {
+    ...COMMON_STYLES,
     right: GAP,
     top: "50%",
     transform: "translateY(-50%)",
   },
   BOTTOM_RIGHT: {
+    ...COMMON_STYLES,
     right: GAP,
     bottom: -GAP,
     transform: "translateY(100%)",
