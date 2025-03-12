@@ -56,8 +56,10 @@ export const DynamicChildPositioner = ({
       const rightWidth = textRight.getBoundingClientRect().width;
       const leftWidth = textLeft.getBoundingClientRect().width;
 
-      const secondaryWidth = primary === "left" ? leftWidth : rightWidth;
-      const primaryWidth = primary === "left" ? rightWidth : leftWidth;
+      const { primaryWidth, secondaryWidth } =
+        primary === "left"
+          ? { primaryWidth: leftWidth, secondaryWidth: rightWidth }
+          : { primaryWidth: rightWidth, secondaryWidth: leftWidth };
 
       const primaryCanFit = primaryWidth + 2 * GAP <= containerRectWidth;
       const secondaryCanFit =
