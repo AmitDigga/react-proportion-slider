@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { ProportionSlider } from "../src/components/PropertionSlider";
+import { ProportionSlider } from "../src/components/ProportionSlider";
 
 function App() {
   const [proportions, setProportions] = React.useState<[number, number]>([

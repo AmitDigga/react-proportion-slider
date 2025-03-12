@@ -1,5 +1,5 @@
 import { DynamicChildPositioner } from "./DynamicChildPositioner";
-import { ProportionDetail, DisplayValueTypes } from "./PropertionSlider";
+import { ProportionDetail, DisplayValueTypes } from "./ProportionSlider";
 
 export type ProportionProp = {
   value: number;

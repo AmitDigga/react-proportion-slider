@@ -1,1 +1,1 @@
-export * from "./components/PropertionSlider";
+export * from "./components/ProportionSlider";
