@@ -1,8 +1,21 @@
 {
   "name": "react-proportion-slider",
   "private": false,
-  "version": "0.9.0",
+  "version": "0.9.1",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/react-proportion-slider.umd.js",
+  "module": "./dist/react-proportion-slider.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-proportion-slider.es.js",
+      "require": "./dist/react-proportion-slider.umd.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -10,8 +23,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -24,6 +37,11 @@
     "globals": "^15.15.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   }
 }
