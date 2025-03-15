@@ -65,4 +65,29 @@ describe("ProportionSlider", () => {
 
     expect(mockOnChange).toHaveBeenCalled();
   });
+
+  it("works on mobile", async () => {
+    const mockOnChange = vi.fn();
+    // userEvent.setup();
+
+    render(
+      <ProportionSlider
+        value={[50, 50]}
+        onChange={mockOnChange}
+        proportions={[{ name: "A" }, { name: "B" }]}
+      />
+    );
+
+    const slider = screen.getByRole("slider");
+    const knob = slider.querySelector("div[role='button']");
+    expect(knob).toBeDefined();
+    // Simulate drag start
+    fireEvent.touchStart(knob as HTMLElement, { touches: [{ clientX: 0 }] });
+    // Simulate drag movement
+    fireEvent.touchMove(window, { touches: [{ clientX: 100 }] });
+    // Simulate drag end
+    fireEvent.touchEnd(window);
+
+    expect(mockOnChange).toHaveBeenCalled();
+  });
 });

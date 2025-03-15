@@ -20,22 +20,33 @@ export const SliderKnob = ({
   const ref = useRef<HTMLDivElement | null>(null);
   const refIsDragging = useRef<boolean>(false);
   useEffect(() => {
-    const onMouseDown = (e: MouseEvent) => {
-      if (e.target !== ref.current) {
+    const getClientX = (e: MouseEvent | TouchEvent): number => {
+      return isTouchEvent(e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
+    };
+
+    const handleStart = (e: MouseEvent | TouchEvent) => {
+      if ("touches" in e) {
+        if (!ref.current?.contains(e.target as Node)) {
+          return false;
+        }
+      } else if (e.target !== ref.current) {
         return false;
       }
+
       refIsDragging.current = true;
-      onDragStart(e.clientX);
+      onDragStart(getClientX(e));
       return true;
     };
-    const onMouseMove = (e: MouseEvent) => {
+
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!refIsDragging.current) {
         return false;
       }
-      onDrag(e.clientX);
+      onDrag(getClientX(e));
       return true;
     };
-    const onMouseUp = () => {
+
+    const handleEnd = () => {
       if (!refIsDragging.current) {
         return false;
       }
@@ -43,15 +54,30 @@ export const SliderKnob = ({
       onDragEnd();
       return true;
     };
-    window.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
+
+    // Mouse events
+    window.addEventListener("mousedown", handleStart);
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleEnd);
+
+    // Touch events
+    window.addEventListener("touchstart", handleStart, { passive: false });
+    window.addEventListener("touchmove", handleMove, { passive: false });
+    window.addEventListener("touchend", handleEnd);
+
     return () => {
-      window.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
+      // Remove mouse events
+      window.removeEventListener("mousedown", handleStart);
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleEnd);
+
+      // Remove touch events
+      window.removeEventListener("touchstart", handleStart);
+      window.removeEventListener("touchmove", handleMove);
+      window.removeEventListener("touchend", handleEnd);
     };
   }, [onDragStart, onDrag, onDragEnd]);
+
   return (
     <div
       ref={ref}
@@ -67,3 +93,7 @@ export const SliderKnob = ({
     ></div>
   );
 };
+
+function isTouchEvent(e: MouseEvent | TouchEvent): e is TouchEvent {
+  return "touches" in e;
+}
