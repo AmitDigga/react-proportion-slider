@@ -75,6 +75,7 @@ export const ProportionSlider = ({
           refWidth.current = el.getBoundingClientRect().width;
         }
       }}
+      role="slider"
       style={{
         display: "flex",
         flexDirection: "row",

@@ -55,6 +55,7 @@ export const SliderKnob = ({
   return (
     <div
       ref={ref}
+      role="button"
       style={{
         width: `${width}px`,
         margin: `${gap}px ${gap}px`,
