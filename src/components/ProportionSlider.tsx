@@ -11,7 +11,7 @@ export type DisplayValueTypes = "percentage" | "none";
 export type ProportionSliderProps = {
   value: [number, number];
   proportions: [ProportionDetail, ProportionDetail];
-  onChange: (change: [number, number]) => void;
+  onChange?: (change: [number, number]) => void;
   sliderOptions?: {
     width: number;
     gap: number;
@@ -64,7 +64,7 @@ export const ProportionSlider = ({
       const total = refValue1Start.current! + refValue2Start.current!;
       let newValue1 = refValue1Start.current! + (diffPx / totalWidthPx) * total;
       newValue1 = Math.max(0, Math.min(total, newValue1));
-      onChange([newValue1, total - newValue1]);
+      onChange?.([newValue1, total - newValue1]);
     },
     [onChange, sliderWidth]
   );
