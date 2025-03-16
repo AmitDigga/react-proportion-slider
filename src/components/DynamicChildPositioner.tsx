@@ -1,29 +1,27 @@
-import React, {
-  useRef,
-  useState,
-  useMemo,
-  useEffect,
-  PropsWithChildren,
-} from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
+import { ProportionDetail } from "./types";
+import { HiddenSpaceTaker } from "./HiddenSpaceTaker";
 
-type DynamicChildPositionerProps = PropsWithChildren<{
-  rightNode: React.ReactNode;
-  leftNode: React.ReactNode;
+type DynamicChildPositionerProps = {
+  detail: ProportionDetail;
   primaryNode: "left" | "right";
-  backgroundColor?: string;
   width: number | string;
   ariaLabel?: string;
-}>;
+  valueLabel: string;
+};
 
 export const DynamicChildPositioner = ({
-  rightNode,
-  leftNode,
+  detail,
+  valueLabel,
   primaryNode,
   width,
-  backgroundColor = "gray",
-  children,
   ariaLabel,
 }: DynamicChildPositionerProps) => {
+  const labelNode = <div style={TEXT_STYLE}>{detail.label}</div>;
+  const percentNode = <div style={TEXT_STYLE}>{valueLabel}</div>;
+  const maxPercentNode = <div style={TEXT_STYLE}>{`100%`}</div>;
+  const rightNode = primaryNode === "right" ? labelNode : percentNode;
+  const leftNode = primaryNode === "left" ? labelNode : percentNode;
   const ref = useRef<HTMLDivElement | null>(null);
   const refRight = useRef<HTMLDivElement | null>(null);
   const refLeft = useRef<HTMLDivElement | null>(null);
@@ -92,7 +90,7 @@ export const DynamicChildPositioner = ({
       style={{
         position: "relative",
         width,
-        backgroundColor,
+        backgroundColor: detail.backgroundColor,
         borderRadius: "5px",
         color: "white",
       }}
@@ -103,7 +101,8 @@ export const DynamicChildPositioner = ({
       <div ref={refRight} style={rightStyle}>
         {rightNode}
       </div>
-      {children}
+      <HiddenSpaceTaker>{maxPercentNode}</HiddenSpaceTaker>
+      <HiddenSpaceTaker>{labelNode}</HiddenSpaceTaker>
     </div>
   );
 };
@@ -152,3 +151,8 @@ const STYLES: Record<string, React.CSSProperties> = {
     transform: "translateY(100%)",
   },
 };
+
+const TEXT_STYLE = {
+  whiteSpace: "nowrap",
+  userSelect: "none",
+} as const;

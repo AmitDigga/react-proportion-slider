@@ -1,5 +1,5 @@
 import { useCallback, useRef, CSSProperties } from "react";
-import { Proportion, SliderKnob } from "./components";
+import { DynamicChildPositioner, SliderKnob } from "./components";
 import { ProportionDetail, SliderKnobOptions } from "./components/types";
 
 export type ProportionSliderProps = {
@@ -105,11 +105,11 @@ export const ProportionSlider = ({
       }}
       className={className}
     >
-      <Proportion
+      <DynamicChildPositioner
         detail={proportions[0]}
         valueLabel={`${Math.round((value[0] * 100) / total)}%`}
         width={`calc(${(value[0] * 100) / total}% - ${sliderWidth / 2}px)`}
-        anchor="left"
+        primaryNode="left"
       />
       <SliderKnob
         onDragStart={disabled ? undefined : onDragStart}
@@ -117,11 +117,11 @@ export const ProportionSlider = ({
         onDragEnd={disabled ? undefined : onDragEnd}
         {...mergedKnobOptions}
       />
-      <Proportion
+      <DynamicChildPositioner
         detail={proportions[1]}
         valueLabel={`${Math.round((value[1] * 100) / total)}%`}
         width={`calc(${(value[1] * 100) / total}% - ${sliderWidth / 2}px)`}
-        anchor="right"
+        primaryNode="right"
       />
     </div>
   );
