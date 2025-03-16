@@ -1,6 +1,12 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+  PropsWithChildren,
+} from "react";
 
-type DynamicChildPositionerProps = {
+type DynamicChildPositionerProps = PropsWithChildren<{
   rightNode: React.ReactNode;
   leftNode: React.ReactNode;
   options: {
@@ -8,7 +14,7 @@ type DynamicChildPositionerProps = {
   };
   backgroundColor?: string;
   width: number | string;
-};
+}>;
 
 export const DynamicChildPositioner = ({
   rightNode,
@@ -16,6 +22,7 @@ export const DynamicChildPositioner = ({
   options: { primary },
   width,
   backgroundColor = "gray",
+  children,
 }: DynamicChildPositionerProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const refRight = useRef<HTMLDivElement | null>(null);
@@ -93,6 +100,7 @@ export const DynamicChildPositioner = ({
       <div ref={refRight} style={rightStyle}>
         {rightNode}
       </div>
+      {children}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { DynamicChildPositioner } from "./DynamicChildPositioner";
+import { HiddenSpaceTaker } from "./HiddenSpaceTaker";
 import { ProportionDetail, DisplayValueTypes } from "./ProportionSlider";
 
 export type ProportionProp = {
@@ -41,6 +42,18 @@ export const Proportion = ({
       </div>
     ) : null;
 
+  const maxPercentNode =
+    displayValueType === "percentage" ? (
+      <div
+        style={{
+          userSelect: "none",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {`100%`}
+      </div>
+    ) : null;
+
   return (
     <DynamicChildPositioner
       width={width}
@@ -50,6 +63,9 @@ export const Proportion = ({
         primary: anchorName,
       }}
       backgroundColor={backgroundColor}
-    ></DynamicChildPositioner>
+    >
+      <HiddenSpaceTaker>{maxPercentNode}</HiddenSpaceTaker>
+      <HiddenSpaceTaker>{nameNode}</HiddenSpaceTaker>
+    </DynamicChildPositioner>
   );
 };
