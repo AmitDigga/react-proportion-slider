@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { ProportionSlider } from "../src/components/ProportionSlider";
+import { ProportionSlider } from "../src";
 
 function App() {
   const [proportions, setProportions] = React.useState<[number, number]>([
@@ -21,26 +21,23 @@ function App() {
         value={proportions}
         proportions={[
           {
-            name: "Skill",
+            label: "Skill",
             backgroundColor: "#31332E",
           },
           {
-            name: "3.7 Sonnet",
+            label: "3.7 Sonnet",
             backgroundColor: "#5f625C",
           },
         ]}
         onChange={(change) => {
           setProportions(change);
         }}
-        sliderOptions={{
+        knobOptions={{
           width: 5,
           gap: 5,
           backgroundColor: "#EC1308",
         }}
-        options={{
-          height: 50,
-          displayValueType: "percentage",
-        }}
+        height={50}
       />
     </div>
   );

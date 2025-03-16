@@ -9,20 +9,20 @@ import React, {
 type DynamicChildPositionerProps = PropsWithChildren<{
   rightNode: React.ReactNode;
   leftNode: React.ReactNode;
-  options: {
-    primary: "left" | "right";
-  };
+  primaryNode: "left" | "right";
   backgroundColor?: string;
   width: number | string;
+  ariaLabel?: string;
 }>;
 
 export const DynamicChildPositioner = ({
   rightNode,
   leftNode,
-  options: { primary },
+  primaryNode,
   width,
   backgroundColor = "gray",
   children,
+  ariaLabel,
 }: DynamicChildPositionerProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const refRight = useRef<HTMLDivElement | null>(null);
@@ -33,23 +33,25 @@ export const DynamicChildPositioner = ({
 
   const rightStyle = useMemo(() => {
     const rightNoSpace =
-      fitStatus === "none" || (fitStatus === "primary" && primary === "left");
-    if (primary === "right") {
+      fitStatus === "none" ||
+      (fitStatus === "primary" && primaryNode === "left");
+    if (primaryNode === "right") {
       return rightNoSpace ? STYLES["BOTTOM_RIGHT"] : STYLES["RIGHT"];
     } else {
       return rightNoSpace ? STYLES["TOP_LEFT"] : STYLES["RIGHT"];
     }
-  }, [fitStatus, primary]);
+  }, [fitStatus, primaryNode]);
 
   const leftStyle = useMemo(() => {
     const leftNoSpace =
-      fitStatus === "none" || (fitStatus === "primary" && primary === "right");
-    if (primary === "left") {
+      fitStatus === "none" ||
+      (fitStatus === "primary" && primaryNode === "right");
+    if (primaryNode === "left") {
       return leftNoSpace ? STYLES["BOTTOM_LEFT"] : STYLES["LEFT"];
     } else {
       return leftNoSpace ? STYLES["TOP_RIGHT"] : STYLES["LEFT"];
     }
-  }, [fitStatus, primary]);
+  }, [fitStatus, primaryNode]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,7 +66,7 @@ export const DynamicChildPositioner = ({
       const leftWidth = textLeft.getBoundingClientRect().width;
 
       const { primaryWidth, secondaryWidth } =
-        primary === "left"
+        primaryNode === "left"
           ? { primaryWidth: leftWidth, secondaryWidth: rightWidth }
           : { primaryWidth: rightWidth, secondaryWidth: leftWidth };
 
@@ -81,11 +83,12 @@ export const DynamicChildPositioner = ({
       setFitStatus(fitStatus);
     }, 1000 / 30);
     return () => clearInterval(interval);
-  }, [ref, refRight, refLeft, primary]);
+  }, [ref, refRight, refLeft, primaryNode]);
 
   return (
     <div
       ref={ref}
+      aria-label={ariaLabel}
       style={{
         position: "relative",
         width,

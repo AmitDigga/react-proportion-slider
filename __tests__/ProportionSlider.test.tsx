@@ -16,10 +16,10 @@ describe("ProportionSlider", () => {
         onChange={() => {}}
         proportions={[
           {
-            name: "A",
+            label: "A",
           },
           {
-            name: "B",
+            label: "B",
           },
         ]}
       />
@@ -32,12 +32,12 @@ describe("ProportionSlider", () => {
       <ProportionSlider
         value={[50, 50]}
         onChange={() => {}}
-        proportions={[{ name: "Left Side" }, { name: "Right Side" }]}
+        proportions={[{ label: "Left Side" }, { label: "Right Side" }]}
       />
     );
 
-    expect(screen.getByText("Left Side")).toBeDefined();
-    expect(screen.getByText("Right Side")).toBeDefined();
+    expect(screen.getAllByText("Left Side")).toHaveLength(2);
+    expect(screen.getAllByText("Right Side")).toHaveLength(2);
   });
 
   it("calls onChange when slider knob is moved", async () => {
@@ -48,7 +48,7 @@ describe("ProportionSlider", () => {
       <ProportionSlider
         value={[50, 50]}
         onChange={mockOnChange}
-        proportions={[{ name: "A" }, { name: "B" }]}
+        proportions={[{ label: "A" }, { label: "B" }]}
       />
     );
 
@@ -74,7 +74,7 @@ describe("ProportionSlider", () => {
       <ProportionSlider
         value={[50, 50]}
         onChange={mockOnChange}
-        proportions={[{ name: "A" }, { name: "B" }]}
+        proportions={[{ label: "A" }, { label: "B" }]}
       />
     );
 

@@ -1,71 +1,39 @@
 import { DynamicChildPositioner } from "./DynamicChildPositioner";
 import { HiddenSpaceTaker } from "./HiddenSpaceTaker";
-import { ProportionDetail, DisplayValueTypes } from "./ProportionSlider";
+import { ProportionDetail } from "./types";
 
 export type ProportionProp = {
-  value: number;
-  total: number;
+  valueLabel: string;
   detail: ProportionDetail;
   width: number | string;
-  anchorName: "left" | "right";
-  displayValueType: DisplayValueTypes;
-  backgroundColor?: string;
+  anchor: "left" | "right";
 };
 export const Proportion = ({
-  value,
-  total,
+  valueLabel,
   detail,
   width,
-  anchorName,
-  displayValueType,
-  backgroundColor = "gray",
+  anchor,
 }: ProportionProp) => {
-  const nameNode = (
-    <div
-      style={{
-        userSelect: "none",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {detail.name}
-    </div>
-  );
-  const percentNode =
-    displayValueType === "percentage" ? (
-      <div
-        style={{
-          userSelect: "none",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {`${Math.round((value * 100) / total)}%`}
-      </div>
-    ) : null;
-
-  const maxPercentNode =
-    displayValueType === "percentage" ? (
-      <div
-        style={{
-          userSelect: "none",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {`100%`}
-      </div>
-    ) : null;
+  const labelNode = <div style={TEXT_STYLE}>{detail.label}</div>;
+  const percentNode = <div style={TEXT_STYLE}>{valueLabel}</div>;
+  const maxPercentNode = <div style={TEXT_STYLE}>{`100%`}</div>;
 
   return (
     <DynamicChildPositioner
+      ariaLabel={detail.ariaLabel}
       width={width}
-      rightNode={anchorName === "right" ? nameNode : percentNode}
-      leftNode={anchorName === "left" ? nameNode : percentNode}
-      options={{
-        primary: anchorName,
-      }}
-      backgroundColor={backgroundColor}
+      rightNode={anchor === "right" ? labelNode : percentNode}
+      leftNode={anchor === "left" ? labelNode : percentNode}
+      primaryNode={anchor}
+      backgroundColor={detail.backgroundColor}
     >
       <HiddenSpaceTaker>{maxPercentNode}</HiddenSpaceTaker>
-      <HiddenSpaceTaker>{nameNode}</HiddenSpaceTaker>
+      <HiddenSpaceTaker>{labelNode}</HiddenSpaceTaker>
     </DynamicChildPositioner>
   );
 };
+
+const TEXT_STYLE = {
+  whiteSpace: "nowrap",
+  userSelect: "none",
+} as const;

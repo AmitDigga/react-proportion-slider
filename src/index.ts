@@ -1,3 +1,3 @@
-export * from "./components/ProportionSlider";
-import { ProportionSlider } from "./components/ProportionSlider";
+export * from "./ProportionSlider";
+import { ProportionSlider } from "./ProportionSlider";
 export default ProportionSlider;

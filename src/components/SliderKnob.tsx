@@ -1,21 +1,25 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, CSSProperties } from "react";
 
 export type SliderKnobProps = {
+  className?: string;
   width: number;
   gap: number;
   backgroundColor?: string;
-  onDragStart: (px: number) => void;
-  onDrag: (px: number) => void;
-  onDragEnd: () => void;
+  onDragStart?: (px: number) => void;
+  onDrag?: (px: number) => void;
+  onDragEnd?: () => void;
+  style?: CSSProperties;
 };
 
 export const SliderKnob = ({
+  className,
   width,
   gap,
   backgroundColor = "red",
   onDrag,
   onDragStart,
   onDragEnd,
+  style,
 }: SliderKnobProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const refIsDragging = useRef<boolean>(false);
@@ -25,6 +29,7 @@ export const SliderKnob = ({
     };
 
     const handleStart = (e: MouseEvent | TouchEvent) => {
+      if (!onDragStart) return false;
       if ("touches" in e) {
         if (!ref.current?.contains(e.target as Node)) {
           return false;
@@ -42,7 +47,7 @@ export const SliderKnob = ({
       if (!refIsDragging.current) {
         return false;
       }
-      onDrag(getClientX(e));
+      onDrag?.(getClientX(e));
       return true;
     };
 
@@ -51,7 +56,7 @@ export const SliderKnob = ({
         return false;
       }
       refIsDragging.current = false;
-      onDragEnd();
+      onDragEnd?.();
       return true;
     };
 
@@ -82,13 +87,15 @@ export const SliderKnob = ({
     <div
       ref={ref}
       role="button"
+      className={className}
       style={{
-        width: `${width}px`,
-        margin: `${gap}px ${gap}px`,
         alignSelf: "stretch",
-        background: backgroundColor,
         borderRadius: "2px",
         cursor: "ew-resize",
+        ...style,
+        width: `${width}px`,
+        margin: `${gap}px ${gap}px`,
+        background: backgroundColor,
       }}
     ></div>
   );
