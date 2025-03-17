@@ -1,6 +1,13 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
 import { ProportionDetail } from "./types";
 import { HiddenSpaceTaker } from "./HiddenSpaceTaker";
+import { clamp, EventType, getClientX } from "../utilities";
 
 type DynamicChildPositionerProps = {
   detail: ProportionDetail;
@@ -8,6 +15,12 @@ type DynamicChildPositionerProps = {
   width: number | string;
   ariaLabel?: string;
   valueLabel: string;
+  /**
+   * Callback when the user clicks on the positioner
+   * @param factor The position of the click as a fraction of the width
+   * of the positioner
+   */
+  onClickWidthFactor: (factor: number) => void;
 };
 
 export const DynamicChildPositioner = ({
@@ -16,6 +29,7 @@ export const DynamicChildPositioner = ({
   primaryNode,
   width,
   ariaLabel,
+  onClickWidthFactor: onClickPercent,
 }: DynamicChildPositionerProps) => {
   const labelNode = <div style={TEXT_STYLE}>{detail.label}</div>;
   const percentNode = <div style={TEXT_STYLE}>{valueLabel}</div>;
@@ -82,6 +96,69 @@ export const DynamicChildPositioner = ({
     }, 1000 / 30);
     return () => clearInterval(interval);
   }, [ref, refRight, refLeft, primaryNode]);
+
+  const refIsDragging = useRef<boolean>(false);
+
+  const onDown = useCallback(
+    (e: EventType) => {
+      const target = e.target as HTMLElement;
+      const rect = ref.current?.getBoundingClientRect();
+      if (ref.current && !ref.current.contains(target)) {
+        return;
+      }
+      if (!rect) return;
+      const { width, left } = rect;
+      if (width === 0) return false;
+      e.preventDefault();
+      refIsDragging.current = true;
+      const x = getClientX(e);
+      const factor = (x - left) / width;
+      onClickPercent(clamp(factor, 0, 1));
+      return true;
+    },
+    [onClickPercent]
+  );
+
+  const onMove = useCallback(
+    (e: EventType) => {
+      const rect = ref.current?.getBoundingClientRect();
+      if (!refIsDragging.current || !rect) {
+        return false;
+      }
+      const { width, left } = rect;
+      if (width === 0) return true;
+      e.preventDefault();
+      const x = getClientX(e);
+      const factor = (x - left) / width;
+      onClickPercent(clamp(factor, 0, 1));
+      return true;
+    },
+    [onClickPercent]
+  );
+
+  const onUp = useCallback((e: EventType) => {
+    if (!refIsDragging.current) return false;
+    refIsDragging.current = false;
+    e.preventDefault();
+    return true;
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchstart", onDown);
+    window.addEventListener("touchmove", onMove);
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchstart", onDown);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [onDown, onMove, onUp]);
 
   return (
     <div

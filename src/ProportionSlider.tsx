@@ -60,6 +60,20 @@ export const ProportionSlider = ({
   const refValue1Start = useRef<number | null>(null);
   const refValue2Start = useRef<number | null>(null);
   const sliderWidth = mergedKnobOptions.width + mergedKnobOptions.gap * 2;
+  const onLeftClick = useCallback(
+    (factor: number) => {
+      const value1 = value[0] * factor;
+      onChange?.([value1, total - value1]);
+    },
+    [value, total, onChange]
+  );
+  const onRightClick = useCallback(
+    (factor: number) => {
+      const value2 = value[1] * (1 - factor);
+      onChange?.([total - value2, value2]);
+    },
+    [value, total, onChange]
+  );
   const onDragStart = useCallback(
     (px: number): void => {
       refStartX.current = px;
@@ -110,6 +124,7 @@ export const ProportionSlider = ({
         valueLabel={`${Math.round((value[0] * 100) / total)}%`}
         width={`calc(${(value[0] * 100) / total}% - ${sliderWidth / 2}px)`}
         primaryNode="left"
+        onClickWidthFactor={onLeftClick}
       />
       <SliderKnob
         onDragStart={disabled ? undefined : onDragStart}
@@ -122,6 +137,7 @@ export const ProportionSlider = ({
         valueLabel={`${Math.round((value[1] * 100) / total)}%`}
         width={`calc(${(value[1] * 100) / total}% - ${sliderWidth / 2}px)`}
         primaryNode="right"
+        onClickWidthFactor={onRightClick}
       />
     </div>
   );

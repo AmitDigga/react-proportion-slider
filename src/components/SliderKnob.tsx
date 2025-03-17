@@ -1,4 +1,5 @@
 import { useRef, useEffect, CSSProperties } from "react";
+import { getClientX } from "../utilities";
 
 export type SliderKnobProps = {
   className?: string;
@@ -25,9 +26,6 @@ export const SliderKnob = ({
   const refIsDragging = useRef<boolean>(false);
   useEffect(() => {
     if (ref.current === null) return;
-    const getClientX = (e: MouseEvent | TouchEvent): number => {
-      return isTouchEvent(e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
-    };
 
     const handleStart = (e: MouseEvent | TouchEvent) => {
       if (!onDragStart) return false;
@@ -104,7 +102,3 @@ export const SliderKnob = ({
     ></div>
   );
 };
-
-function isTouchEvent(e: MouseEvent | TouchEvent): e is TouchEvent {
-  return "touches" in e;
-}
