@@ -1,22 +1,27 @@
 import React, { useRef, useState, useMemo, useEffect } from "react";
+import { ProportionDetail } from "./types";
+import { HiddenSpaceTaker } from "./HiddenSpaceTaker";
 
 type DynamicChildPositionerProps = {
-  rightNode: React.ReactNode;
-  leftNode: React.ReactNode;
-  options: {
-    primary: "left" | "right";
-  };
-  backgroundColor?: string;
+  detail: ProportionDetail;
+  primaryNode: "left" | "right";
   width: number | string;
+  ariaLabel?: string;
+  valueLabel: string;
 };
 
 export const DynamicChildPositioner = ({
-  rightNode,
-  leftNode,
-  options: { primary },
+  detail,
+  valueLabel,
+  primaryNode,
   width,
-  backgroundColor = "gray",
+  ariaLabel,
 }: DynamicChildPositionerProps) => {
+  const labelNode = <div style={TEXT_STYLE}>{detail.label}</div>;
+  const percentNode = <div style={TEXT_STYLE}>{valueLabel}</div>;
+  const maxPercentNode = <div style={TEXT_STYLE}>{`100%`}</div>;
+  const rightNode = primaryNode === "right" ? labelNode : percentNode;
+  const leftNode = primaryNode === "left" ? labelNode : percentNode;
   const ref = useRef<HTMLDivElement | null>(null);
   const refRight = useRef<HTMLDivElement | null>(null);
   const refLeft = useRef<HTMLDivElement | null>(null);
@@ -26,23 +31,25 @@ export const DynamicChildPositioner = ({
 
   const rightStyle = useMemo(() => {
     const rightNoSpace =
-      fitStatus === "none" || (fitStatus === "primary" && primary === "left");
-    if (primary === "right") {
+      fitStatus === "none" ||
+      (fitStatus === "primary" && primaryNode === "left");
+    if (primaryNode === "right") {
       return rightNoSpace ? STYLES["BOTTOM_RIGHT"] : STYLES["RIGHT"];
     } else {
       return rightNoSpace ? STYLES["TOP_LEFT"] : STYLES["RIGHT"];
     }
-  }, [fitStatus, primary]);
+  }, [fitStatus, primaryNode]);
 
   const leftStyle = useMemo(() => {
     const leftNoSpace =
-      fitStatus === "none" || (fitStatus === "primary" && primary === "right");
-    if (primary === "left") {
+      fitStatus === "none" ||
+      (fitStatus === "primary" && primaryNode === "right");
+    if (primaryNode === "left") {
       return leftNoSpace ? STYLES["BOTTOM_LEFT"] : STYLES["LEFT"];
     } else {
       return leftNoSpace ? STYLES["TOP_RIGHT"] : STYLES["LEFT"];
     }
-  }, [fitStatus, primary]);
+  }, [fitStatus, primaryNode]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,7 +64,7 @@ export const DynamicChildPositioner = ({
       const leftWidth = textLeft.getBoundingClientRect().width;
 
       const { primaryWidth, secondaryWidth } =
-        primary === "left"
+        primaryNode === "left"
           ? { primaryWidth: leftWidth, secondaryWidth: rightWidth }
           : { primaryWidth: rightWidth, secondaryWidth: leftWidth };
 
@@ -74,15 +81,16 @@ export const DynamicChildPositioner = ({
       setFitStatus(fitStatus);
     }, 1000 / 30);
     return () => clearInterval(interval);
-  }, [ref, refRight, refLeft, primary]);
+  }, [ref, refRight, refLeft, primaryNode]);
 
   return (
     <div
       ref={ref}
+      aria-label={ariaLabel}
       style={{
         position: "relative",
         width,
-        backgroundColor,
+        backgroundColor: detail.backgroundColor,
         borderRadius: "5px",
         color: "white",
       }}
@@ -93,6 +101,8 @@ export const DynamicChildPositioner = ({
       <div ref={refRight} style={rightStyle}>
         {rightNode}
       </div>
+      <HiddenSpaceTaker>{maxPercentNode}</HiddenSpaceTaker>
+      <HiddenSpaceTaker>{labelNode}</HiddenSpaceTaker>
     </div>
   );
 };
@@ -141,3 +151,8 @@ const STYLES: Record<string, React.CSSProperties> = {
     transform: "translateY(100%)",
   },
 };
+
+const TEXT_STYLE = {
+  whiteSpace: "nowrap",
+  userSelect: "none",
+} as const;
