@@ -1,67 +1,89 @@
 # React Proportion Slider
 
-> **Note:** This package is currently in beta
+> **Note:** This package is currently in beta.
 
 A React component that allows users to adjust the proportion of two elements using a slider.
 
 ## Installation
 
-(Not yet published to npm)
-
 ```bash
 npm install react-proportion-slider
+```
+
+```bash
+yarn add react-proportion-slider
 ```
 
 ## Usage
 
 ```tsx
-import React from "react";
-import { ProportionSlider } from "react-proportion-slider";
-
 function App() {
   const [proportions, setProportions] = React.useState<[number, number]>([
     50, 50,
   ]);
   return (
-    <div
-      style={{
-        height: "100%",
-        flex: 1,
-        padding: "20px 200px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
-    >
+    <div>
       <ProportionSlider
         value={proportions}
+        width={500}
         proportions={[
           {
-            name: "Skill",
+            label: "Skill",
             backgroundColor: "#31332E",
           },
           {
-            name: "3.7 Sonnet",
+            label: "3.7 Sonnet",
             backgroundColor: "#5f625C",
           },
         ]}
         onChange={(change) => {
           setProportions(change);
         }}
-        sliderOptions={{
+        knobOptions={{
           width: 5,
           gap: 5,
           backgroundColor: "#EC1308",
         }}
-        options={{
-          height: 50,
-          displayValueType: "percentage",
-        }}
+        height={50}
       />
     </div>
   );
 }
 ```
+
+## Props
+
+| Prop Name   | Type                                 | Required | Description                                         |
+| ----------- | ------------------------------------ | -------- | --------------------------------------------------- |
+| value       | [number, number]                     | Yes      | Current values of the two proportions [left, right] |
+| proportions | [ProportionDetail, ProportionDetail] | Yes      | Details for the two proportions [left, right]       |
+| onChange    | (values: [number, number]) => void   | No       | Callback when values change                         |
+| knobOptions | SliderKnobOptions                    | No       | Appearance of the slider knob                       |
+| height      | number                               | No       | Height of the slider in pixels                      |
+| width       | number                               | No       | Width of the slider in pixels                       |
+| disabled    | boolean                              | No       | Whether the slider is disabled                      |
+| className   | string                               | No       | Custom class name for the slider container          |
+| style       | React.CSSProperties                  | No       | Custom styles for the slider container              |
+| ariaLabel   | string                               | No       | Accessibility label for the slider                  |
+
+### ProportionDetail
+
+| Property        | Type   | Required | Description                                     |
+| --------------- | ------ | -------- | ----------------------------------------------- |
+| label           | string | Yes      | Custom label to display                         |
+| backgroundColor | string | No       | Color of the proportion segment                 |
+| data            | any    | No       | Optional data to associate with this proportion |
+| ariaLabel       | string | No       | Accessibility label for this proportion         |
+
+### SliderKnobOptions
+
+| Property        | Type                | Required | Description                          |
+| --------------- | ------------------- | -------- | ------------------------------------ |
+| width           | number              | No       | Width of the slider knob in pixels   |
+| gap             | number              | No       | Gap around the slider knob in pixels |
+| backgroundColor | string              | No       | Color of the slider knob             |
+| className       | string              | No       | Custom class name for the knob       |
+| style           | React.CSSProperties | No       | Custom styles for the knob           |
 
 ## Future Features
 
