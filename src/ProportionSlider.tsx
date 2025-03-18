@@ -1,6 +1,10 @@
 import { useCallback, useRef, CSSProperties, useEffect } from "react";
-import { DynamicChildPositioner, SliderKnob } from "./components";
-import { ProportionDetail, SliderKnobOptions } from "./components/types";
+import {
+  DynamicChildPositioner,
+  SliderKnob,
+  ProportionDetail,
+  SliderKnobOptions,
+} from "./components";
 import { EventType, getClientX, clamp } from "./utilities";
 
 export type ProportionSliderProps = {
