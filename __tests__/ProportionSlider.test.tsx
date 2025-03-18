@@ -1,12 +1,43 @@
 import React from "react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterAll,
+  beforeAll,
+} from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { ProportionSlider } from "../src";
 
 describe("ProportionSlider", () => {
+  const boundingClientRect = {
+    width: 100,
+    height: 100,
+    top: 0,
+    right: 100,
+    bottom: 100,
+    left: 0,
+    x: 0,
+    y: 0,
+    toJSON: () => {},
+  };
+
+  const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+
+  beforeAll(() => {
+    Element.prototype.getBoundingClientRect = () => boundingClientRect;
+  });
+
+  afterAll(() => {
+    Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
+  });
+
   beforeEach(() => {
     // Reset mocks between tests
     vi.clearAllMocks();
+    cleanup();
   });
 
   it("renders without crashing", () => {
@@ -53,13 +84,14 @@ describe("ProportionSlider", () => {
     );
 
     const slider = screen.getByRole("slider");
-    const knob = slider.querySelector("div[role='button']");
-    expect(knob).toBeDefined();
+    expect(slider).toBeDefined();
+
+    expect(slider.getBoundingClientRect().width).toBe(100); // mocked
 
     // Simulate drag start
-    fireEvent.mouseDown(knob as HTMLElement);
+    fireEvent.mouseDown(slider as HTMLElement, { clientX: 50 });
     // Simulate drag movement
-    fireEvent.mouseMove(window, { clientX: 100 });
+    fireEvent.mouseMove(window, { clientX: 45 });
     // Simulate drag end
     fireEvent.mouseUp(window);
 
@@ -79,15 +111,16 @@ describe("ProportionSlider", () => {
     );
 
     const slider = screen.getByRole("slider");
-    const knob = slider.querySelector("div[role='button']");
-    expect(knob).toBeDefined();
+    expect(slider).toBeDefined();
+
+    expect(slider.getBoundingClientRect().width).toBe(100); // mocked
+
     // Simulate drag start
-    fireEvent.touchStart(knob as HTMLElement, { touches: [{ clientX: 0 }] });
+    fireEvent.touchStart(slider as HTMLElement, { touches: [{ clientX: 50 }] });
     // Simulate drag movement
-    fireEvent.touchMove(window, { touches: [{ clientX: 100 }] });
+    fireEvent.touchMove(window, { touches: [{ clientX: 45 }] });
     // Simulate drag end
     fireEvent.touchEnd(window);
-
     expect(mockOnChange).toHaveBeenCalled();
   });
 });

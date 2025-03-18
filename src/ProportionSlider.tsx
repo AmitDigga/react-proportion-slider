@@ -1,6 +1,7 @@
-import { useCallback, useRef, CSSProperties } from "react";
+import { useCallback, useRef, CSSProperties, useEffect } from "react";
 import { DynamicChildPositioner, SliderKnob } from "./components";
 import { ProportionDetail, SliderKnobOptions } from "./components/types";
+import { EventType, getClientX, clamp } from "./utilities";
 
 export type ProportionSliderProps = {
   /**
@@ -27,6 +28,8 @@ export type ProportionSliderProps = {
 
   /** Height of the slider in pixels */
   height?: number;
+  /** Width of the slider in pixels */
+  width?: number;
   /** Whether the slider is disabled */
   disabled?: boolean;
   /** Custom class name for the slider container */
@@ -50,62 +53,90 @@ export const ProportionSlider = ({
   ariaLabel,
   className,
   style,
+  width,
 }: ProportionSliderProps) => {
   const mergedKnobOptions = getMergeKnobOptions(knobOptions);
 
-  const refWidth = useRef<number | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const total = value[0] + value[1];
-
-  const refStartX = useRef<number | null>(null);
-  const refValue1Start = useRef<number | null>(null);
-  const refValue2Start = useRef<number | null>(null);
   const sliderWidth = mergedKnobOptions.width + mergedKnobOptions.gap * 2;
-  const onLeftClick = useCallback(
-    (factor: number) => {
-      const value1 = value[0] * factor;
+  const refTotal = useRef<number>(total);
+  const refSliderWidth = useRef<number>(sliderWidth);
+  refTotal.current = total;
+  refSliderWidth.current = sliderWidth;
+  const refIsDragging = useRef<boolean>(false);
+
+  const onChangeValueFromEvent = useCallback(
+    (e: EventType, { width, left }: { width: number; left: number }) => {
+      const x = getClientX(e);
+      const knobWidth = refSliderWidth.current;
+      const factor = (x - left - knobWidth / 2) / (width - knobWidth);
+      const total = refTotal.current;
+      const value1 = clamp(total * factor, 0, total);
       onChange?.([value1, total - value1]);
     },
-    [value, total, onChange]
+    [onChange]
   );
-  const onRightClick = useCallback(
-    (factor: number) => {
-      const value2 = value[1] * (1 - factor);
-      onChange?.([total - value2, value2]);
+
+  const onDown = useCallback(
+    (e: EventType) => {
+      const target = e.target as HTMLElement;
+      const rect = ref.current?.getBoundingClientRect();
+      if (
+        (ref.current && !ref.current.contains(target)) ||
+        !rect ||
+        rect.width === 0
+      ) {
+        console.log("returning because of rect width", rect?.width);
+        return;
+      }
+      e.preventDefault();
+      refIsDragging.current = true;
+      onChangeValueFromEvent(e, rect);
+      return true;
     },
-    [value, total, onChange]
+    [onChangeValueFromEvent]
   );
-  const onDragStart = useCallback(
-    (px: number): void => {
-      refStartX.current = px;
-      refValue1Start.current = value[0];
-      refValue2Start.current = value[1];
+
+  const onMove = useCallback(
+    (e: EventType) => {
+      const rect = ref.current?.getBoundingClientRect();
+      if (!refIsDragging.current || !rect || rect.width === 0) {
+        return false;
+      }
+      e.preventDefault();
+      onChangeValueFromEvent(e, rect);
+      return true;
     },
-    [value]
+    [onChangeValueFromEvent]
   );
-  const onDragEnd = useCallback(() => {
-    refStartX.current = null;
-    refValue1Start.current = null;
-    refValue2Start.current = null;
+
+  const onUp = useCallback((e: EventType) => {
+    if (!refIsDragging.current) return false;
+    refIsDragging.current = false;
+    e.preventDefault();
+    return true;
   }, []);
-  const onDrag = useCallback(
-    (px: number): void => {
-      if (refStartX.current === null) return;
-      const diffPx = px - refStartX.current;
-      const totalWidthPx = refWidth.current! - sliderWidth;
-      const total = refValue1Start.current! + refValue2Start.current!;
-      let newValue1 = refValue1Start.current! + (diffPx / totalWidthPx) * total;
-      newValue1 = Math.max(0, Math.min(total, newValue1));
-      onChange?.([newValue1, total - newValue1]);
-    },
-    [onChange, sliderWidth]
-  );
+
+  useEffect(() => {
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchstart", onDown);
+    window.addEventListener("touchmove", onMove);
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchstart", onDown);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [onDown, onMove, onUp]);
   return (
     <div
-      ref={(el) => {
-        if (el) {
-          refWidth.current = el.getBoundingClientRect().width;
-        }
-      }}
+      ref={ref}
       role="slider"
       aria-label={ariaLabel}
       aria-valuenow={Math.round((value[0] / total) * 100)}
@@ -113,6 +144,7 @@ export const ProportionSlider = ({
         display: "flex",
         flexDirection: "row",
         height,
+        width,
         opacity: disabled ? 0.6 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
         ...style,
@@ -124,20 +156,13 @@ export const ProportionSlider = ({
         valueLabel={`${Math.round((value[0] * 100) / total)}%`}
         width={`calc(${(value[0] * 100) / total}% - ${sliderWidth / 2}px)`}
         primaryNode="left"
-        onClickWidthFactor={onLeftClick}
       />
-      <SliderKnob
-        onDragStart={disabled ? undefined : onDragStart}
-        onDrag={disabled ? undefined : onDrag}
-        onDragEnd={disabled ? undefined : onDragEnd}
-        {...mergedKnobOptions}
-      />
+      <SliderKnob disabled={disabled} {...mergedKnobOptions} />
       <DynamicChildPositioner
         detail={proportions[1]}
         valueLabel={`${Math.round((value[1] * 100) / total)}%`}
         width={`calc(${(value[1] * 100) / total}% - ${sliderWidth / 2}px)`}
         primaryNode="right"
-        onClickWidthFactor={onRightClick}
       />
     </div>
   );
