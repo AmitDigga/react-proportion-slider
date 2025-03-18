@@ -4,6 +4,10 @@
 
 A React component that allows users to adjust the proportion of two elements using a slider.
 
+https://github.com/user-attachments/assets/edd1b8fa-b9d7-401c-9815-69713758e454
+
+
+
 ## Installation
 
 ```bash
